@@ -1,8 +1,9 @@
 
 import { Camera } from 'expo-camera';
 import React from 'react';
-import { StyleSheet, Text, View,StatusBar, Button, Dimensions, Image, Animated } from 'react-native';
+import { StyleSheet, Text, View,StatusBar, Button, Dimensions, Image, Animated, ImagePickerIOS } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
+import * as ImagePicker from 'expo-image-picker';
 
 
 export default function App() {
@@ -12,35 +13,21 @@ export default function App() {
 
   React.useEffect(() => {
     (async () => {
-      await Camera.requestPermissionsAsync();
+      await ImagePicker.requestCameraPermissionsAsync();
       await MediaLibrary.requestPermissionsAsync();
       //setHasPermission(status === 'granted');
     })();
   }, []);
 
-
-  const capture = async ()=>{
-    setProcess(true);
-    camera.takePictureAsync({onPictureSaved:(pic)=>{
-      setProcess(false);
-      setImg(pic);
-      console.log("Finish");
-    }});
-  }
   if(img===null){
-    return (
-      <View>
-        <StatusBar backgroundColor="#c5c5c5" />
-        <View style={{backgroundColor:"orange",width:"auto"}}>
-          <Camera ref={ref=> camera=ref} useCamera2Api={true}>
-            <View style={{justifyContent:"flex-end",width:"100%",height:"100%"}}>
-              <Button disabled={process} title="Capture" onPress={()=>capture()}></Button>
-            </View>
-          </Camera>
-        </View>
-      </View>
-    );
+    return (<View>
+      <StatusBar></StatusBar>
+      <Button title="launch camera" onPress={async ()=>{
+        setImg(await ImagePicker.launchCameraAsync());
+      }}></Button>
+    </View>)
   }else{
+    console.log(img);
     return(
       <View style={{backgroundColor:"orange"}}>
         <StatusBar backgroundColor="#c5c5c5" />
