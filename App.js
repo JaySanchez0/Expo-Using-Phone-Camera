@@ -9,7 +9,7 @@ export default function App() {
   let camera = null;
   const [img,setImg] = React.useState(null);
   const [process,setProcess] = React.useState(false);
-  
+
   React.useEffect(() => {
     (async () => {
       await Camera.requestPermissionsAsync();
@@ -21,17 +21,18 @@ export default function App() {
 
   const capture = async ()=>{
     setProcess(true);
-    const pic = await camera.takePictureAsync({quality: 0, base64: true});
-    setProcess(false);
-    setImg(pic);
-    console.log("Finish");
+    camera.takePictureAsync({onPictureSaved:(pic)=>{
+      setProcess(false);
+      setImg(pic);
+      console.log("Finish");
+    }});
   }
   if(img===null){
     return (
       <View>
         <StatusBar backgroundColor="#c5c5c5" />
         <View style={{backgroundColor:"orange",width:"auto"}}>
-          <Camera ref={ref=> camera=ref}>
+          <Camera ref={ref=> camera=ref} useCamera2Api={true}>
             <View style={{justifyContent:"flex-end",width:"100%",height:"100%"}}>
               <Button disabled={process} title="Capture" onPress={()=>capture()}></Button>
             </View>
