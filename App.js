@@ -1,7 +1,7 @@
 
 import { Camera } from 'expo-camera';
 import React from 'react';
-import { StyleSheet, Text, View,StatusBar, Button, Dimensions, Image } from 'react-native';
+import { StyleSheet, Text, View,StatusBar, Button, Dimensions, Image, Animated } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 
 
@@ -9,6 +9,7 @@ export default function App() {
   let camera = null;
   const [img,setImg] = React.useState(null);
   const [process,setProcess] = React.useState(false);
+  
   React.useEffect(() => {
     (async () => {
       await Camera.requestPermissionsAsync();
@@ -17,16 +18,11 @@ export default function App() {
     })();
   }, []);
 
-  if(process){
-    return <View>
-      <StatusBar>
-      </StatusBar>
-      <Text>Process photo</Text>
-    </View>
-  };
 
   const capture = async ()=>{
-    const pic = await camera.takePictureAsync({quality: 0, base64: true,});
+    setProcess(true);
+    const pic = await camera.takePictureAsync({quality: 0, base64: true});
+    setProcess(false);
     setImg(pic);
     console.log("Finish");
   }
@@ -37,7 +33,7 @@ export default function App() {
         <View style={{backgroundColor:"orange",width:"auto"}}>
           <Camera ref={ref=> camera=ref}>
             <View style={{justifyContent:"flex-end",width:"100%",height:"100%"}}>
-              <Button title="Capture" onPress={()=>capture()}></Button>
+              <Button disabled={process} title="Capture" onPress={()=>capture()}></Button>
             </View>
           </Camera>
         </View>
